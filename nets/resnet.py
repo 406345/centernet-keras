@@ -1,6 +1,6 @@
-#-------------------------------------------------------------#
+# -------------------------------------------------------------#
 #   ResNet50的网络部分
-#-------------------------------------------------------------#
+# -------------------------------------------------------------#
 from __future__ import print_function
 
 import keras.backend as K
@@ -17,9 +17,7 @@ from keras.regularizers import l2
 from keras.utils.data_utils import get_file
 
 
-
 def identity_block(input_tensor, kernel_size, filters, stage, block):
-
     filters1, filters2, filters3 = filters
 
     conv_name_base = 'res' + str(stage) + block + '_branch'
@@ -29,20 +27,19 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     x = BatchNormalization(name=bn_name_base + '2a')(x)
     x = Activation('relu')(x)
 
-    x = Conv2D(filters2, kernel_size,padding='same', name=conv_name_base + '2b', use_bias=False)(x)
-    x = BatchNormalization(name=bn_name_base + '2b')(x)
-    x = Activation('relu')(x)
-
-    x = Conv2D(filters3, (1, 1), name=conv_name_base + '2c', use_bias=False)(x)
-    x = BatchNormalization(name=bn_name_base + '2c')(x)
-
-    x = layers.add([x, input_tensor])
-    x = Activation('relu')(x)
+    # x = Conv2D(filters2, kernel_size, padding='same', name=conv_name_base + '2b', use_bias=False)(x)
+    # x = BatchNormalization(name=bn_name_base + '2b')(x)
+    # x = Activation('relu')(x)
+    #
+    # x = Conv2D(filters3, (1, 1), name=conv_name_base + '2c', use_bias=False)(x)
+    # x = BatchNormalization(name=bn_name_base + '2c')(x)
+    #
+    # x = layers.add([x, input_tensor])
+    # x = Activation('relu')(x)
     return x
 
 
 def conv_block(input_tensor, kernel_size, filters, stage, block, strides=(2, 2)):
-
     filters1, filters2, filters3 = filters
 
     conv_name_base = 'res' + str(stage) + block + '_branch'
@@ -84,34 +81,36 @@ def ResNet50(inputs):
     # 128,128,64 -> 128,128,256
     x = conv_block(x, 3, [64, 64, 256], stage=2, block='a', strides=(1, 1))
     x = identity_block(x, 3, [64, 64, 256], stage=2, block='b')
-    x = identity_block(x, 3, [64, 64, 256], stage=2, block='c')
+    # x = identity_block(x, 3, [64, 64, 256], stage=2, block='c')
 
     # 128,128,256 -> 64,64,512
     x = conv_block(x, 3, [128, 128, 512], stage=3, block='a')
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='b')
-    x = identity_block(x, 3, [128, 128, 512], stage=3, block='c')
-    x = identity_block(x, 3, [128, 128, 512], stage=3, block='d')
+    # x = identity_block(x, 3, [128, 128, 512], stage=3, block='c')
+    # x = identity_block(x, 3, [128, 128, 512], stage=3, block='d')
 
     # 64,64,512 -> 32,32,1024
     x = conv_block(x, 3, [256, 256, 1024], stage=4, block='a')
     x = identity_block(x, 3, [256, 256, 1024], stage=4, block='b')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='c')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='d')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='e')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='f')
+    # x = identity_block(x, 3, [256, 256, 1024], stage=4, block='c')
+    # x = identity_block(x, 3, [256, 256, 1024], stage=4, block='d')
+    # x = identity_block(x, 3, [256, 256, 1024], stage=4, block='e')
+    # x = identity_block(x, 3, [256, 256, 1024], stage=4, block='f')
 
     # 32,32,1024 -> 16,16,2048
     x = conv_block(x, 3, [512, 512, 2048], stage=5, block='a')
     x = identity_block(x, 3, [512, 512, 2048], stage=5, block='b')
-    x = identity_block(x, 3, [512, 512, 2048], stage=5, block='c')
+    # x = identity_block(x, 3, [512, 512, 2048], stage=5, block='c')
 
     return x
 
-def centernet_head(x,num_classes):
+
+def centernet_head(x, num_classes):
     x = Dropout(rate=0.5)(x)
-    #-------------------------------#
+    print(x.shape)
+    # -------------------------------#
     #   解码器
-    #-------------------------------#
+    # -------------------------------#
     num_filters = 256
     # 16, 16, 2048  ->  32, 32, 256 -> 64, 64, 128 -> 128, 128, 64
     for i in range(3):
