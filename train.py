@@ -50,7 +50,7 @@ if __name__ == "__main__":
     #   主干特征提取网络的选择
     #   resnet50和hourglass
     # -------------------------------------------#
-    backbone = "resnet50"
+    backbone = "resnet18"
 
     # ----------------------------------------------------#
     #   获取centernet模型
@@ -62,8 +62,8 @@ if __name__ == "__main__":
     #   训练自己的数据集时提示维度不匹配正常
     #   预测的东西都不一样了自然维度不匹配
     # ------------------------------------------------------#
-    model_path = r"logs/ep004-loss6.903-val_loss6.329.h5"
-    model.load_weights(model_path, by_name=True, skip_mismatch=True)
+    model_path = r"logs/ep005-loss2.968-val_loss2.834.h5"
+    # model.load_weights(model_path, by_name=True, skip_mismatch=True)
 
     # ----------------------------------------------------#
     #   获得图片路径和标签
@@ -91,12 +91,12 @@ if __name__ == "__main__":
     #   early_stopping用于设定早停，val_loss多次不下降自动结束训练，表示模型基本收敛
     # -------------------------------------------------------------------------------#
     logging = TensorBoard(log_dir="logs")
-    checkpoint = ModelCheckpoint('logs/ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5',
+    checkpoint = ModelCheckpoint('logs/' + backbone + '-ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5',
                                  monitor='val_loss', save_weights_only=True, save_best_only=False, period=1)
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1)
     early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)
 
-    fronzen_num = 0# len(model.layers) // 2
+    fronzen_num = 0  # len(model.layers) // 2
     if backbone == "resnet50":
         freeze_layer = fronzen_num
     elif backbone == "hourglass":
@@ -119,9 +119,9 @@ if __name__ == "__main__":
     # ------------------------------------------------------#
     if True:
         Lr = 1e-3
-        Batch_size = 4
+        Batch_size = 5
         Init_Epoch = 0
-        Freeze_Epoch = 20
+        Freeze_Epoch = 50
 
         gen = Generator(Batch_size, lines[:num_train], lines[num_train:], input_shape, num_classes)
 

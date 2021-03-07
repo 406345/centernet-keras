@@ -11,7 +11,7 @@ from nets.center_training import loss
 from nets.hourglass import HourglassNetwork
 from nets.resnet import ResNet50, centernet_head
 from nets.resnet18 import ResNet18
-from nets.resnet18 import Resnet18head
+from nets.resnet18 import resnet18_head
 
 
 def nms(heat, kernel=3):
@@ -158,9 +158,9 @@ def centernet(input_shape, num_classes, backbone='resnet50', max_objects=100, mo
             prediction_model = Model(inputs=image_input, outputs=detections)
             return prediction_model
     elif backbone == 'resnet18':
-        C5 = ResNet18(image_input, num_classes)
+        C5 = ResNet18(image_input)
         print(C5.shape)
-        y1, y2, y3 = Resnet18head(C5, num_classes)
+        y1, y2, y3 = resnet18_head(C5, num_classes)
 
         if mode == "train":
             loss_ = Lambda(loss, name='centernet_loss')(

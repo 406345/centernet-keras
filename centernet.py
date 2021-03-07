@@ -28,16 +28,16 @@ def preprocess_image(image):
 # --------------------------------------------#
 class CenterNet(object):
     _defaults = {
-        "model_path": 'logs/ep001-loss5.395-val_loss5.234.h5',
+        "model_path": 'logs/ep058-loss2.025-val_loss1.667.h5',
         "classes_path": 'model_data/voc_classes.txt',
         "backbone": 'resnet50',
         "input_shape": [512, 512, 3],
-        "confidence": 0.03,
+        "confidence": 0.3,
         # backbone为resnet50时建议设置为True
         # backbone为hourglass时建议设置为False
         # 也可以根据检测效果自行选择
-        "nms": False,
-        "nms_threhold": 0.03,
+        "nms": True,
+        "nms_threhold": 0.3,
     }
 
     @classmethod
@@ -107,7 +107,7 @@ class CenterNet(object):
         # ----------------------------------------------------------------------------------#
         #   将RGB转化成BGR，这是因为原始的centernet_hourglass权值是使用BGR通道的图片训练的
         # ----------------------------------------------------------------------------------#
-        photo = np.array(crop_img, dtype=np.float32)[:, :, ::-1]
+        photo = np.array(crop_img, dtype=np.float32)#[:, :, ::-1]
         photo = np.reshape(preprocess_image(photo), [1, self.input_shape[0], self.input_shape[1], self.input_shape[2]])
 
         preds = self.centernet.predict(photo)

@@ -70,6 +70,16 @@ def build_xml(dict):
         xml_file.close()
 
 
+def vailed_area(box, threadhold=10):
+    xi = box['xmin']
+    xa = box['xmax']
+    yi = box['ymin']
+    ya = box['ymax']
+
+    area = (xa - xi) * (ya - yi)
+    return area > threadhold
+
+
 def build_train(categories, dict):
     train_file = open(TRAIN_FILE_OUTPUT, 'w')
     for idx, key in enumerate(dict.keys()):
@@ -81,17 +91,19 @@ def build_train(categories, dict):
             continue
 
         line = img_path
+        empty = True
         for obj in img['objects']:
-            cid = categories.index(obj['category'])
-            if cid > len(categories):
-                print(cid)
-            line += ' {0},{1},{2},{3},{4}'.format(
-                int(obj['bbox']['xmin']),
-                int(obj['bbox']['ymin']),
-                int(obj['bbox']['xmax']),
-                int(obj['bbox']['ymax']),
-                cid)
-        train_file.write(line + '\n')
+            if obj['category'] in categories and vailed_area(obj['bbox'], 200):
+                cid = categories.index(obj['category'])
+                empty = False
+                line += ' {0},{1},{2},{3},{4}'.format(
+                    int(obj['bbox']['xmin']),
+                    int(obj['bbox']['ymin']),
+                    int(obj['bbox']['xmax']),
+                    int(obj['bbox']['ymax']),
+                    cid)
+
+        if not empty: train_file.write(line + '\n')
     pass
 
 
@@ -99,9 +111,12 @@ if __name__ == "__main__":
     annotation = json.load(open(ANNOTATION_JSON_FILE, 'r'))
     files_dict = {}
 
-    class_file = open('classes.txt','w')
+    classes = []
+    class_file = open('classes.txt', 'w')
     for t in annotation['types']:
-        class_file.write(t + '\n')
+        if t[0:2] == 'pr' or t[:2] == 'pl':
+            classes.append(t)
+            class_file.write(t + '\n')
     class_file.close()
 
     for key in annotation['imgs'].keys():
@@ -113,5 +128,5 @@ if __name__ == "__main__":
 
         files_dict[key] = img
 
-    build_xml(files_dict)
-    build_train(annotation['types'], files_dict)
+    # build_xml(files_dict)
+    build_train(classes, files_dict)
