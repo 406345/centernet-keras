@@ -2,11 +2,9 @@
 
 ### 关于最终的train.txt
 内容比较简单
-
-image path [xmin,ymin,xmax,ymax,cateogorid] .....
-image path [xmin,ymin,xmax,ymax,cateogorid] [xmin,ymin,xmax,ymax,cateogorid] ...
-image path [xmin,ymin,xmax,ymax,cateogorid] .....
-
+```
+<image path> [xmin,ymin,xmax,ymax,cateogorid] .....
+```
 其中 categoryid 要与voc_classes对应即可 可以自己组织 不需要用工程里面的脚本处理
 
 ### 增加了一个resnet18
