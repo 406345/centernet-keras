@@ -1,3 +1,16 @@
+## DSCoder 补充
+
+### 关于最终的train.txt
+内容比较简单
+
+<image path> [xmin,ymin,xmax,ymax,cateogorid] .....
+
+其中 categoryid 要与voc_classes对应即可 可以自己组织 不需要用工程里面的脚本处理
+
+### 增加了一个resnet18
+
+resnet18 最后多一个conv 2048 是为了衔接这个工程的后续处理， 欢迎大家pr优化。
+
 ## CenterNet:Objects as Points目标检测模型在Keras当中的实现
 ---
 
